@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Leaflet.js Guide</title>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0">
+<!-- Get the leaflet CSS file -->
+
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+/* Button used to open the contact form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type=text], .form-container input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+</style>
+
+  <!-- Load Leaflet from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+    integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+    crossorigin=""></script>
+
+  <!-- Load Esri Leaflet Geocoder from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.css"
+    integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
+    crossorigin="">
+  <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.js"
+    integrity="sha512-HrFUyCEtIpxZloTgEKKMq4RFYhxjJkCiF5sDxuAokklOeZ68U2NPfh4MFtyIVWlsKtVbK5GD2/JzFyAfvT5ejA=="
+    crossorigin=""></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+</head>
+<body>
+<h1>My Leafletjs Map</h1>
+
+<button class="open-button" onclick="openForm()">Open Form</button>
+
+<div class="form-popup" id="myForm">
+  <form action="addlocation" method="POST" class="form-container">
+    <h1>When you select a location the coordinates are auto filled</h1>
+
+<label for="name"><b>Name</b></label>
+    <input id='name' type="text" placeholder="Name of the place" name="name" required>
+
+    <label for="latitude"><b>Latitude</b></label>
+    <input id='ipid1' type="float" placeholder="latitude" name="latitude" required>
+
+    <label for="longitude"><b>Longitude</b></label>
+    <input id='ipid2' type="float" placeholder="longitude" name="longitude" required>
+
+    <label for="description"><b>Description</b></label>
+    <input id='desc' type="text" placeholder="description" name="description" >
+
+    <button type="submit" class="btn">Setpoint</button>
+  </form>
+</div>
+
+<script>document.getElementById("myForm").style.display = "block";</script>
+
+
+<!--<div id="map"></div>-->
+<!-- Specify the map and it's dimensions -->
+<div id="map" style="width: 1020px; height: 600px"></div>
+
+<!-- Get the leaflet JavaScript file -->
+
+<script>
+var map = L.map('map').setView([11,79], 10);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  var gcs = L.esri.Geocoding.geocodeService();
+
+  map.on('click', (e)=>{
+    gcs.reverse().latlng(e.latlng).run((err, res)=>{
+      if(err) return;
+      console.log(res.latlng);
+      console.log(res.latlng['lat']);
+      dataToSend = {
+              "lat": res.latlng['lat'],
+              "lng": res.latlng['lng']
+            };
+      //alert(res.latlng);
+      L.marker(res.latlng).addTo(map).bindPopup(res.address.Match_addr).openPopup();
+      var l1=parseFloat(res.latlng['lat']);
+      var l2=parseFloat(res.latlng['lng']);
+      document.getElementById("ipid1").value=l1;
+      document.getElementById("ipid2").value=l2;
+      //const s='http://localhost:8000/test12/'+l1+','+l2;
+      console.log(l1);
+      console.log(l2);
+      
+
+
+      //window.location.replace(s);
+    });
+
+  });
+
+  function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+//function closeForm() {
+  //document.getElementById("myForm").style.display = "none";
+//}
+</script>
+</body>
+</html>

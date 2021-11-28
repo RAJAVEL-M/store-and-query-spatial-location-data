@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Show points</title>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0">
+<!-- Get the leaflet CSS file -->
+
+
+  <!-- Load Leaflet from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+</head>
+<body>
+<h1>All location names </h1>
+<script>
+var points="{{allpoints|safe}}";
+
+console.log(points);
+var names=[
+{% for point in allpoints %}
+"{{point.name}}",
+{% endfor%}
+]
+console.log(names);
+var loc=[
+{% for point in allpoints %}
+"{{point.location}}",
+
+{% endfor%}
+]
+//console.log(loc);
+
+
+
+
+//console.log(parseFloat(lat[0]));
+//console.log(parseFloat(lng[0]));
+
+</script>
+<ul>
+{% for point in allpoints %}
+<li>{{point.name}}
+</li>
+{% endfor %}
+</ul>
+
+
+<div id="map" style="width: 1020px; height: 600px"></div>
+<script>
+  var lat={{lat|safe}};
+var long={{long|safe}};
+console.log(lat);
+console.log(long);
+console.log(lat[1]);
+  console.log(long.length);
+  var dumm=[1.22,3.44,5.66];
+  console.log(dumm.length);
+  console.log(dumm[0]);
+var map = L.map('map').setView([11,79], 10);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  
+  for(i=0;i<lat.length;i++){
+	L.marker([lat[i],long[i]]).addTo(map).bindPopup(names[i]).openPopup();
+  }
+  </script>
+</body>
+</html>
