@@ -16,10 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from addlocation.views import addpoint,viewpoints
+from addlocation.views import addpoint,viewpoints,allpoints
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('addlocation',addpoint,name='addpoint'),
     path('viewpoints',viewpoints,name='viewpoints'),
+    path('allpoints',allpoints,name='allpoints'),
     ]
     
