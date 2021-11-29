@@ -21,21 +21,27 @@ def addpoint(request):
         newpoint = points(name=name,location=location,description=desc)
         newpoint.save()
         
-    return render(request,'fsumma.html')
+    return render(request,'addpoint.html')
 
+@csrf_exempt
 def viewpoints(request):
-    allpoints=points.objects.all()
-    user_location = Point(79.803314,11.299627,srid=4326)
-    queryset = points.objects.annotate(distance=Distance("location", user_location)).order_by("distance")[0:3]
-    
-    names=[i for i in queryset]
-    name=[i.name for i in names]
-    lo=[i.location for i in names]
-    #print(lo)
-    xy=[[j for j in i] for i in lo]
-    lat=[i[1] for i in xy]
-    long=[i[0] for i in xy]
-    print(long)
-    print(type(long[1]))
-    return render(request,'showpoints.html',{'allpoints':allpoints,'name':name,'lat':lat,'long':long})
+    if request.method=='POST':
+        print("post request received")
+        print(request.POST)
+        lat1=float(request.POST['latitude'])
+        long1=float(request.POST['longitude'])
+        allpoints=points.objects.all()
+        user_location = Point(long1,lat1,srid=4326)
+        queryset = points.objects.annotate(distance=Distance("location", user_location)).order_by("distance")[0:1]
+        print("queryset",queryset)    
+        names=[i for i in queryset]
+        name=[i.name for i in names]
+        lo=[i.location for i in names]
+        #print(lo)
+        xy=[[j for j in i] for i in lo]
+        lat=[i[1] for i in xy]
+        long=[i[0] for i in xy]
+        print(long)
+        return render(request,'showpoints.html',{'allpoints':queryset,'name':name,'lat':lat,'long':long})
+    return render(request,'map.html')
 
