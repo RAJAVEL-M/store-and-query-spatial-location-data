@@ -1,9 +1,7 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Leaflet.js Guide</title>
+<title>Add location</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0">
@@ -108,7 +106,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
 </head>
 <body>
-<h1>My Leafletjs Map</h1>
+<h1>Add location into the database by selecting the location and fill name and description</h1>
 
 <button class="open-button" onclick="openForm()">Open Form</button>
 
@@ -142,7 +140,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 <!-- Get the leaflet JavaScript file -->
 
 <script>
-var map = L.map('map').setView([11,79], 10);
+var map = L.map('map').setView([11,79], 7);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -153,25 +151,11 @@ var map = L.map('map').setView([11,79], 10);
   map.on('click', (e)=>{
     gcs.reverse().latlng(e.latlng).run((err, res)=>{
       if(err) return;
-      console.log(res.latlng);
-      console.log(res.latlng['lat']);
-      dataToSend = {
-              "lat": res.latlng['lat'],
-              "lng": res.latlng['lng']
-            };
-      //alert(res.latlng);
       L.marker(res.latlng).addTo(map).bindPopup(res.address.Match_addr).openPopup();
       var l1=parseFloat(res.latlng['lat']);
       var l2=parseFloat(res.latlng['lng']);
       document.getElementById("ipid1").value=l1;
-      document.getElementById("ipid2").value=l2;
-      //const s='http://localhost:8000/test12/'+l1+','+l2;
-      console.log(l1);
-      console.log(l2);
-      
-
-
-      //window.location.replace(s);
+      document.getElementById("ipid2").value=l2;      
     });
 
   });
@@ -180,9 +164,6 @@ var map = L.map('map').setView([11,79], 10);
   document.getElementById("myForm").style.display = "block";
 }
 
-//function closeForm() {
-  //document.getElementById("myForm").style.display = "none";
-//}
 </script>
 </body>
 </html>

@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Leaflet.js Guide</title>
+<title>select location</title>
 <meta charset="utf-8" />
 <meta name="viewport"
   content="width=device-width, initial-scale=1.0">
@@ -30,17 +29,14 @@
     crossorigin=""></script>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
-
 </head>
 <body>
-<h1>My Leafletjs Map</h1>
+<h1>Select the location </h1>
 
 <div class="form-popup" id="myForm">
 <form action="viewpoints" method="POST" class="form-container">
-    <h1>When you select a location the coordinates are auto filled</h1>
+    <h1>When you select a location the coordinates are auto filled. You need to only click send button</h1>
 
-    <label for="name"><b>Name</b></label>
     
     <label for="latitude"><b>Latitude</b></label>
     <input id='ipid1' type="float" placeholder="latitude" name="latitude" required>
@@ -50,18 +46,18 @@
 
     
 
-    <button type="submit" class="btn">Setpoint</button>
+    <button type="submit" class="btn">Send</button>
   </form>
 </div>
 
 <!--<div id="map"></div>-->
 <!-- Specify the map and it's dimensions -->
-<div id="map" style="width: 1020px; height: 600px"></div>
+<div id="map" style="width: 100%; height: 600px"></div>
 
 <!-- Get the leaflet JavaScript file -->
 
 <script>
-var map = L.map('map').setView([11,79], 10);
+var map = L.map('map').setView([11,79], 7);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -72,32 +68,15 @@ var map = L.map('map').setView([11,79], 10);
   map.on('click', (e)=>{
     gcs.reverse().latlng(e.latlng).run((err, res)=>{
       if(err) return;
-      console.log(res.latlng);
-      console.log(res.latlng['lat']);
-      dataToSend = {
-              "lat": res.latlng['lat'],
-              "lng": res.latlng['lng']
-            };
-      //alert(res.latlng);
       L.marker(res.latlng).addTo(map);
       var l1=parseFloat(res.latlng['lat']);
       var l2=parseFloat(res.latlng['lng']);
       
       document.getElementById("ipid1").value=l1;
       document.getElementById("ipid2").value=l2;
-
-      console.log("form submitted");
-      //const s='http://localhost:8000/test12/'+l1+','+l2;
-      console.log(l1);
-      console.log(l2);
       });
 
   });
-
-
-//function closeForm() {
-  //document.getElementById("myForm").style.display = "none";
-//}
 </script>
 </body>
 </html>
